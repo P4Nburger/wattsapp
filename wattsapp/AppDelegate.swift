@@ -141,14 +141,28 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     // MARK: - Adapter Wattage Fallback
     
     private func readAdapterWattage() -> Int {
-        let snapshot = IOPSCopyPowerSourcesInfo().takeRetainedValue()
-        let sources = IOPSCopyPowerSourcesList(snapshot).takeRetainedValue() as [CFTypeRef]
+        // snapshotが取れなかったら0で返す
+        guard let snapshot = IOPSCopyPowerSourcesInfo()?.takeRetainedValue() else {
+            logger.debug("snapshot is nil")
+            return 0
+        }
+
+        // sourcesリストが無ければ0で返す
+        guard let sources = IOPSCopyPowerSourcesList(snapshot)?
+            .takeRetainedValue() as? [CFTypeRef] else {
+            logger.debug("sources is nil")
+            return 0
+        }
+
         var adapterWattage = 0
-        
+
         for ps in sources {
-            guard let info = IOPSGetPowerSourceDescription(snapshot, ps)
-                .takeRetainedValue() as? [String: Any] else { continue }
-            
+            // infoディクショナリが取れなければ飛ばす
+            guard let info = IOPSGetPowerSourceDescription(snapshot, ps)?
+                .takeUnretainedValue() as? [String: Any] else {
+                continue
+            }
+
             if let sourceState = info[kIOPSPowerSourceStateKey] as? String,
                sourceState == kIOPSACPowerValue,
                let watts = info[kIOPSPowerAdapterWattsKey] as? Int {
@@ -156,13 +170,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 break
             }
         }
-        
+
         if adapterWattage == 0 {
             logger.debug("No AC adapter wattage found (may be on battery)")
         }
-        
+
         return adapterWattage
     }
+
     
     // MARK: - Timer Scheduling
     

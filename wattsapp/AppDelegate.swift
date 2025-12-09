@@ -116,13 +116,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     // MARK: - Update Logic
     
     @objc func updateWattage() {
-        var displayText = "—"
+        Task.detached { [weak self] in
+            await self?.updateWattageAsync()
+        }
+    }
+    
+    private func updateWattageAsync() async {
+        // Perform data fetching off the main thread
         var desiredInterval: TimeInterval = Constants.slowInterval
-        
+
         let status = batteryProvider.currentChargingStatus()
         let adapter = batteryProvider.readAdapterWattage()
         let displayTextComputed = textFormatter.text(for: status, adapterWattage: adapter)
-        
+
         if let st = status {
             if st.onAC {
                 desiredInterval = st.isCharging ? Constants.chargingInterval : Constants.slowInterval
@@ -132,15 +138,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         } else {
             desiredInterval = Constants.slowInterval
         }
-        
-        displayText = displayTextComputed
-        
-        scheduleTimerIfNeeded(desiredInterval)
-        
-        DispatchQueue.main.async {
-            if self.lastDisplayText != displayText {
-                self.statusItem.button?.title = displayText
-                self.lastDisplayText = displayText
+
+        // Hop to main for timer scheduling and UI updates
+        await MainActor.run {
+            self.scheduleTimerIfNeeded(desiredInterval)
+            if self.lastDisplayText != displayTextComputed {
+                self.statusItem.button?.title = displayTextComputed
+                self.lastDisplayText = displayTextComputed
             }
         }
     }
@@ -155,3 +159,4 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 }
+

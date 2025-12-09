@@ -31,6 +31,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private let batteryProvider = BatteryInfoProvider()
     private var textFormatter = StatusTextFormatter()
     
+    // MARK: - Update Interval Mode
+    private enum UpdateIntervalMode: Int { case fast, automatic, slow }
+    private var updateIntervalMode: UpdateIntervalMode = .automatic
+
+    // MARK: - Menu Items References
+    private var statusDetailItem: NSMenuItem?
+    private var updateIntervalMenuItem: NSMenuItem?
+    private var updateIntervalFastItem: NSMenuItem?
+    private var updateIntervalAutoItem: NSMenuItem?
+    private var updateIntervalSlowItem: NSMenuItem?
+    
     // MARK: - App Lifecycle
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
@@ -64,14 +75,50 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     private func setupMenu() {
         let menu = NSMenu()
-        menu.addItem(
-            NSMenuItem(
-                title: "Quit WattsConnected",
-                action: #selector(NSApplication.terminate(_:)),
-                keyEquivalent: "q"
-            )
-        )
+
+        // 状態詳細（上部）
+        let detail = NSMenuItem(title: "状態: 取得中…", action: nil, keyEquivalent: "")
+        detail.isEnabled = false
+        menu.addItem(detail)
+        self.statusDetailItem = detail
+
+        menu.addItem(NSMenuItem.separator())
+
+        // 更新間隔サブメニュー
+        let intervalSubmenu = NSMenu(title: "更新間隔")
+
+        let fast = NSMenuItem(title: "高頻度（約1.5秒）", action: #selector(selectUpdateInterval(_:)), keyEquivalent: "")
+        fast.tag = UpdateIntervalMode.fast.rawValue
+        fast.target = self
+        intervalSubmenu.addItem(fast)
+        self.updateIntervalFastItem = fast
+
+        let auto = NSMenuItem(title: "標準（自動）", action: #selector(selectUpdateInterval(_:)), keyEquivalent: "")
+        auto.tag = UpdateIntervalMode.automatic.rawValue
+        auto.target = self
+        intervalSubmenu.addItem(auto)
+        self.updateIntervalAutoItem = auto
+
+        let slow = NSMenuItem(title: "低頻度（5秒）", action: #selector(selectUpdateInterval(_:)), keyEquivalent: "")
+        slow.tag = UpdateIntervalMode.slow.rawValue
+        slow.target = self
+        intervalSubmenu.addItem(slow)
+        self.updateIntervalSlowItem = slow
+
+        let interval = NSMenuItem()
+        interval.title = "更新間隔"
+        interval.submenu = intervalSubmenu
+        menu.addItem(interval)
+        self.updateIntervalMenuItem = interval
+
+        menu.addItem(NSMenuItem.separator())
+
+        // Quit
+        menu.addItem(NSMenuItem(title: "Quit WattsConnected", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
+
         self.statusMenu = menu
+
+        refreshUpdateIntervalChecks()
     }
     
     // MARK: - Power Source Notification
@@ -121,21 +168,57 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
     
+    private func updateMenuItems(with status: PowerStatus?, adapterWattage: Int, effectiveText: String) {
+        var parts: [String] = []
+        if let st = status {
+            if st.onAC {
+                let state = st.isCharging ? "充電中" : "AC接続"
+                parts.append("状態: \(state)")
+                if adapterWattage > 0 {
+                    parts.append("アダプタ: \(adapterWattage)W")
+                }
+            } else {
+                parts.append("状態: バッテリー駆動")
+            }
+        } else {
+            parts.append("状態: 取得不可")
+            if adapterWattage > 0 { parts.append("アダプタ: \(adapterWattage)W") }
+        }
+        parts.append("実効: \(effectiveText)")
+        statusDetailItem?.title = parts.joined(separator: " / ")
+    }
+
+    private func refreshUpdateIntervalChecks() {
+        updateIntervalFastItem?.state = (updateIntervalMode == .fast) ? .on : .off
+        updateIntervalAutoItem?.state = (updateIntervalMode == .automatic) ? .on : .off
+        updateIntervalSlowItem?.state = (updateIntervalMode == .slow) ? .on : .off
+    }
+
+    private func formatTime(_ seconds: TimeInterval) -> String {
+        guard seconds.isFinite && seconds > 0 else { return "--:--" }
+        let m = Int(seconds) / 60
+        let h = m / 60
+        let min = m % 60
+        return String(format: "%d:%02d", h, min)
+    }
+    
     private func updateWattageAsync() async {
         // Perform data fetching off the main thread
-        var desiredInterval: TimeInterval = Constants.slowInterval
-
         let status = batteryProvider.currentChargingStatus()
         let adapter = batteryProvider.readAdapterWattage()
         let displayTextComputed = textFormatter.text(for: status, adapterWattage: adapter)
 
-        if let st = status {
-            if st.onAC {
-                desiredInterval = st.isCharging ? Constants.chargingInterval : Constants.slowInterval
+        var desiredInterval: TimeInterval
+        switch updateIntervalMode {
+        case .fast:
+            desiredInterval = 1.5
+        case .automatic:
+            if let st = status {
+                desiredInterval = st.onAC ? (st.isCharging ? Constants.chargingInterval : Constants.slowInterval) : Constants.batteryInterval
             } else {
-                desiredInterval = Constants.batteryInterval
+                desiredInterval = Constants.slowInterval
             }
-        } else {
+        case .slow:
             desiredInterval = Constants.slowInterval
         }
 
@@ -146,6 +229,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 self.statusItem.button?.title = displayTextComputed
                 self.lastDisplayText = displayTextComputed
             }
+            self.updateMenuItems(with: status, adapterWattage: adapter, effectiveText: displayTextComputed)
         }
     }
     
@@ -158,5 +242,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             statusItem.popUpMenu(menu)
         }
     }
+    
+    @objc private func selectUpdateInterval(_ sender: NSMenuItem) {
+        guard let mode = UpdateIntervalMode(rawValue: sender.tag) else { return }
+        updateIntervalMode = mode
+        refreshUpdateIntervalChecks()
+        updateWattage()
+    }
 }
-

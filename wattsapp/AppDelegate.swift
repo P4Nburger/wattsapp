@@ -28,6 +28,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         category: "battery"
     )
     
+    private let batteryProvider = BatteryInfoProvider()
+    private var textFormatter = StatusTextFormatter()
+    
     // MARK: - App Lifecycle
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
@@ -87,98 +90,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         CFRunLoopAddSource(CFRunLoopGetCurrent(), runLoopSource, .defaultMode)
     }
     
-    // MARK: - Battery Info via IORegistry
-    
-    private func readBatteryInfo() -> [String: Any]? {
-        guard let matching = IOServiceMatching("AppleSmartBattery") else { return nil }
-        let service = IOServiceGetMatchingService(kIOMainPortDefault, matching)
-        
-        if service == 0 {
-            logger.warning("AppleSmartBattery service not found")
-            return nil
-        }
-        
-        var properties: Unmanaged<CFMutableDictionary>?
-        let result = IORegistryEntryCreateCFProperties(
-            service,
-            &properties,
-            kCFAllocatorDefault,
-            0
-        )
-        
-        IOObjectRelease(service)
-        
-        if result != KERN_SUCCESS {
-            logger.error("Failed to create CF properties for battery: kern = \(result)")
-            return nil
-        }
-        
-        guard let dict = properties?.takeRetainedValue() as? [String: Any] else {
-            logger.error("Battery properties dictionary is missing or invalid")
-            return nil
-        }
-        
-        return dict
-    }
-    
-    private func currentChargingStatus() -> (watts: Double, isCharging: Bool, onAC: Bool)? {
-        guard let info = readBatteryInfo() else { return nil }
-        
-        let isCharging = (info["IsCharging"] as? Bool) ?? false
-        let onAC = (info["ExternalConnected"] as? Bool) ?? false
-        
-        if let amperage = info["Amperage"] as? Int,
-           let voltage = info["Voltage"] as? Int {
-            // Amperage: mA, Voltage: mV -> Power: mW
-            let powerMilliwatts = Double(amperage) * Double(voltage)
-            let watts = powerMilliwatts / 1_000_000.0
-            return (watts, isCharging, onAC)
-        }
-        
-        return (0.0, isCharging, onAC)
-    }
-    
-    // MARK: - Adapter Wattage Fallback
-    
-    private func readAdapterWattage() -> Int {
-        // snapshotが取れなかったら0で返す
-        guard let snapshot = IOPSCopyPowerSourcesInfo()?.takeRetainedValue() else {
-            logger.debug("snapshot is nil")
-            return 0
-        }
-
-        // sourcesリストが無ければ0で返す
-        guard let sources = IOPSCopyPowerSourcesList(snapshot)?
-            .takeRetainedValue() as? [CFTypeRef] else {
-            logger.debug("sources is nil")
-            return 0
-        }
-
-        var adapterWattage = 0
-
-        for ps in sources {
-            // infoディクショナリが取れなければ飛ばす
-            guard let info = IOPSGetPowerSourceDescription(snapshot, ps)?
-                .takeUnretainedValue() as? [String: Any] else {
-                continue
-            }
-
-            if let sourceState = info[kIOPSPowerSourceStateKey] as? String,
-               sourceState == kIOPSACPowerValue,
-               let watts = info[kIOPSPowerAdapterWattsKey] as? Int {
-                adapterWattage = watts
-                break
-            }
-        }
-
-        if adapterWattage == 0 {
-            logger.debug("No AC adapter wattage found (may be on battery)")
-        }
-
-        return adapterWattage
-    }
-
-    
     // MARK: - Timer Scheduling
     
     private func scheduleTimer(interval: TimeInterval) {
@@ -206,41 +117,23 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     @objc func updateWattage() {
         var displayText = "—"
-        let threshold = Constants.noiseFloorWatts
         var desiredInterval: TimeInterval = Constants.slowInterval
         
-        if let status = currentChargingStatus() {
-            if status.onAC {
-                let wattsToShow = max(0.0, status.watts)
-                let value = wattsToShow
-                
-                if value >= threshold {
-                    displayText = String(format: "⚡️ %.1fW", value)
-                } else {
-                    let adapter = readAdapterWattage()
-                    if adapter > 0 {
-                        displayText = "🔌 \(adapter)W"
-                    } else {
-                        displayText = "🔌 0W"
-                    }
-                }
-                desiredInterval = status.isCharging ? Constants.chargingInterval : Constants.slowInterval
+        let status = batteryProvider.currentChargingStatus()
+        let adapter = batteryProvider.readAdapterWattage()
+        let displayTextComputed = textFormatter.text(for: status, adapterWattage: adapter)
+        
+        if let st = status {
+            if st.onAC {
+                desiredInterval = st.isCharging ? Constants.chargingInterval : Constants.slowInterval
             } else {
-                // バッテリー駆動時: 放電電力（正の大きさ）を表示
-                let discharge = max(0.0, -status.watts)
-                displayText = String(format: "🔋 %.1fW", discharge)
                 desiredInterval = Constants.batteryInterval
             }
         } else {
-            // フォールバック: アダプタ定格ワット数 or バッテリー表示
-            let wattage = readAdapterWattage()
-            if wattage > 0 {
-                displayText = "🔌 \(wattage)W"
-            } else {
-                displayText = "🔋 On Battery"
-            }
             desiredInterval = Constants.slowInterval
         }
+        
+        displayText = displayTextComputed
         
         scheduleTimerIfNeeded(desiredInterval)
         

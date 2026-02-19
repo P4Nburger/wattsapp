@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		689439ED2F2E556100A07EB5 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 689439EC2F2E556100A07EB5 /* README.md */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		689D63F12E926DCE00517FC7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -24,6 +28,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		689439EC2F2E556100A07EB5 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		689D63E12E926DCC00517FC7 /* wattsapp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = wattsapp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		689D63F02E926DCE00517FC7 /* wattsappTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = wattsappTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		689D63FA2E926DCE00517FC7 /* wattsappUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = wattsappUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -79,6 +84,7 @@
 				689D63F32E926DCE00517FC7 /* wattsappTests */,
 				689D63FD2E926DCE00517FC7 /* wattsappUITests */,
 				689D63E22E926DCC00517FC7 /* Products */,
+				689439EC2F2E556100A07EB5 /* README.md */,
 			);
 			sourceTree = "<group>";
 		};
@@ -212,6 +218,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				689439ED2F2E556100A07EB5 /* README.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -4,21 +4,43 @@ import IOKit.pwr_mgt
 import IOKit
 import os.log
 
-public struct PowerStatus {
+public struct PowerStatus: Sendable {
     public let watts: Double
     public let isCharging: Bool
     public let onAC: Bool
 }
 
-public final class BatteryInfoProvider {
-    private let logger = Logger(
+public struct BatteryDetailInfo: Sendable {
+    public let currentCapacity: Int      // 現在の容量 (mAh)
+    public let maxCapacity: Int          // 最大容量 (mAh)
+    public let designCapacity: Int       // 設計容量 (mAh)
+    public let cycleCount: Int           // 充電サイクル数
+    public let temperature: Double       // 温度 (°C)
+    public let timeToEmpty: Int?         // 残り時間 (分), nil = 計算不可
+    public let timeToFull: Int?          // 満充電までの時間 (分), nil = 計算不可
+    
+    /// バッテリー残量 (0-100%)
+    public var percentage: Int {
+        guard maxCapacity > 0 else { return 0 }
+        return min(100, (currentCapacity * 100) / maxCapacity)
+    }
+    
+    /// バッテリー健康度 (0-100%)
+    public var healthPercentage: Int {
+        guard designCapacity > 0 else { return 0 }
+        return min(100, (maxCapacity * 100) / designCapacity)
+    }
+}
+
+public final class BatteryInfoProvider: Sendable {
+    private nonisolated let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier ?? "com.wattsconnected",
         category: "battery"
     )
 
-    public init() {}
+    public nonisolated init() {}
 
-    private func readBatteryInfo() -> [String: Any]? {
+    private nonisolated func readBatteryInfo() -> [String: Any]? {
         guard let matching = IOServiceMatching("AppleSmartBattery") else { return nil }
         let service = IOServiceGetMatchingService(kIOMainPortDefault, matching)
 
@@ -50,7 +72,7 @@ public final class BatteryInfoProvider {
         return dict
     }
 
-    public func currentChargingStatus() -> PowerStatus? {
+    public nonisolated func currentChargingStatus() -> PowerStatus? {
         guard let info = readBatteryInfo() else { return nil }
 
         let isCharging = (info["IsCharging"] as? Bool) ?? false
@@ -66,7 +88,40 @@ public final class BatteryInfoProvider {
         return PowerStatus(watts: watts, isCharging: isCharging, onAC: onAC)
     }
 
-    public func readAdapterWattage() -> Int {
+    public nonisolated func detailedBatteryInfo() -> BatteryDetailInfo? {
+        guard let info = readBatteryInfo() else { return nil }
+
+        let currentCapacity = (info["CurrentCapacity"] as? Int) ?? 0
+        let maxCapacity = (info["MaxCapacity"] as? Int) ?? 0
+        let designCapacity = (info["DesignCapacity"] as? Int) ?? 0
+        let cycleCount = (info["CycleCount"] as? Int) ?? 0
+
+        // Temperature is in centi-degrees (e.g., 2930 = 29.30°C)
+        let rawTemp = (info["Temperature"] as? Int) ?? 0
+        let temperature = Double(rawTemp) / 100.0
+
+        let timeToEmpty: Int? = {
+            guard let minutes = info["AvgTimeToEmpty"] as? Int, minutes > 0, minutes < 65535 else { return nil }
+            return minutes
+        }()
+
+        let timeToFull: Int? = {
+            guard let minutes = info["AvgTimeToFull"] as? Int, minutes > 0, minutes < 65535 else { return nil }
+            return minutes
+        }()
+
+        return BatteryDetailInfo(
+            currentCapacity: currentCapacity,
+            maxCapacity: maxCapacity,
+            designCapacity: designCapacity,
+            cycleCount: cycleCount,
+            temperature: temperature,
+            timeToEmpty: timeToEmpty,
+            timeToFull: timeToFull
+        )
+    }
+
+    public nonisolated func readAdapterWattage() -> Int {
         guard let snapshot = IOPSCopyPowerSourcesInfo()?.takeRetainedValue() else {
             logger.debug("snapshot is nil")
             return 0

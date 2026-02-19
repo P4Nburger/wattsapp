@@ -1,6 +1,6 @@
 import Foundation
 
-public struct StatusTextFormatter {
+public struct StatusTextFormatter: Sendable {
     public var noiseFloorWatts: Double
     public var chargingSymbol: String
     public var adapterSymbol: String
@@ -16,7 +16,7 @@ public struct StatusTextFormatter {
         self.batterySymbol = batterySymbol
     }
 
-    public func text(for status: PowerStatus?, adapterWattage: Int) -> String {
+    public nonisolated func text(for status: PowerStatus?, adapterWattage: Int) -> String {
         if let status = status {
             if status.onAC {
                 let value = max(0.0, status.watts)

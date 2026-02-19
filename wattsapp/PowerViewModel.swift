@@ -24,16 +24,29 @@ enum UpdateIntervalMode: Int, CaseIterable, Identifiable, Sendable {
         case .slow: return "低頻度（5秒）"
         }
     }
+    
+    nonisolated var infoDescription: String {
+        switch self {
+        case .fast:
+            return "約1.5秒ごとに更新します。リアルタイムで変化を追いたい時に便利ですが、バッテリー消費がやや増えます。"
+        case .automatic:
+            return "電源の状態に応じて自動で間隔を調整します。充電中は2秒、バッテリー駆動中は3秒、AC接続（非充電）時は5秒で更新します。"
+        case .slow:
+            return "5秒ごとに更新します。バッテリー消費を抑えたい場合におすすめです。"
+        }
+    }
 }
 
 class PowerViewModel: ObservableObject {
     // MARK: - Published Properties
     
     @Published var menuBarText: String = "---W"
+    @Published var menuBarIcon: String = "bolt.fill"
     @Published var statusDetailText: String = "状態: 取得中…"
     @Published var batteryDetail: BatteryDetailInfo?
     @Published var updateIntervalMode: UpdateIntervalMode = .automatic {
         didSet {
+            AppSettings.shared.savedUpdateIntervalMode = updateIntervalMode.rawValue
             updateWattage()
         }
     }
@@ -43,6 +56,7 @@ class PowerViewModel: ObservableObject {
     private var powerSourceRunLoopSource: CFRunLoopSource?
     private var timer: Timer?
     private var currentInterval: TimeInterval = 3.0
+    private var settingsCancellable: AnyCancellable?
     
     private let batteryProvider = BatteryInfoProvider()
     private let textFormatter = StatusTextFormatter()
@@ -50,6 +64,18 @@ class PowerViewModel: ObservableObject {
     // MARK: - Init
     
     init() {
+        // Restore persisted update interval
+        if let saved = UpdateIntervalMode(rawValue: AppSettings.shared.savedUpdateIntervalMode) {
+            updateIntervalMode = saved
+        }
+        
+        // Listen for settings changes to re-render menu bar text
+        settingsCancellable = AppSettings.shared.objectWillChange
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                self?.updateWattage()
+            }
+        
         startMonitoring()
     }
     
@@ -84,11 +110,38 @@ class PowerViewModel: ObservableObject {
         let textFormatter = self.textFormatter
         let currentMode = self.updateIntervalMode
         
+        // Read settings on MainActor before entering detached task
+        let s = AppSettings.shared
+        let needsDetail = s.showBatteryPercentage
+            || s.showBatteryHealth
+            || s.showCycleCount
+            || s.showTemperature
+            || s.showTimeRemaining
+            || s.menuBarStyle != .textOnly  // icon needs battery % to pick the right SF Symbol
+        
         Task.detached {
             let status = batteryProvider.currentChargingStatus()
             let adapter = batteryProvider.readAdapterWattage()
-            let detail = batteryProvider.detailedBatteryInfo()
+            let detail = needsDetail ? batteryProvider.detailedBatteryInfo() : nil
             let displayTextComputed = textFormatter.text(for: status, adapterWattage: adapter)
+            
+            // Determine icon
+            let icon: String = {
+                guard let st = status else { return "questionmark.circle" }
+                if st.onAC {
+                    return st.isCharging ? "bolt.fill" : "powerplug.fill"
+                } else {
+                    guard let d = detail else { return "battery.50" }
+                    let pct = d.percentage
+                    switch pct {
+                    case 76...100: return "battery.100"
+                    case 51...75:  return "battery.75"
+                    case 26...50:  return "battery.50"
+                    case 11...25:  return "battery.25"
+                    default:       return "battery.0"
+                    }
+                }
+            }()
             
             // Determine interval
             let desiredInterval: TimeInterval = {
@@ -128,12 +181,9 @@ class PowerViewModel: ObservableObject {
             await MainActor.run { [weak self] in
                 guard let self else { return }
                 self.scheduleTimerIfNeeded(desiredInterval)
-                if self.menuBarText != displayTextComputed {
-                    self.menuBarText = displayTextComputed
-                }
-                if self.statusDetailText != detailText {
-                    self.statusDetailText = detailText
-                }
+                self.menuBarText = displayTextComputed
+                self.menuBarIcon = icon
+                self.statusDetailText = detailText
                 self.batteryDetail = detail
             }
         }

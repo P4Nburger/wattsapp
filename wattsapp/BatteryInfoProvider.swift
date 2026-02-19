@@ -18,16 +18,22 @@ public struct BatteryDetailInfo: Sendable {
     public let temperature: Double       // 温度 (°C)
     public let timeToEmpty: Int?         // 残り時間 (分), nil = 計算不可
     public let timeToFull: Int?          // 満充電までの時間 (分), nil = 計算不可
+    public let osHealthPercent: Int?     // macOS が提供するバッテリー健康度 (%)
     
     /// バッテリー残量 (0-100%)
-    public var percentage: Int {
+    public nonisolated var percentage: Int {
         guard maxCapacity > 0 else { return 0 }
         return min(100, (currentCapacity * 100) / maxCapacity)
     }
     
     /// バッテリー健康度 (0-100%)
-    public var healthPercentage: Int {
-        guard designCapacity > 0 else { return 0 }
+    public nonisolated var healthPercentage: Int {
+        // macOS が直接提供する値を優先
+        if let osHealth = osHealthPercent, osHealth > 0 {
+            return osHealth
+        }
+        // フォールバック: 計算で求める
+        guard designCapacity > 0, maxCapacity > 0 else { return 0 }
         return min(100, (maxCapacity * 100) / designCapacity)
     }
 }
@@ -91,10 +97,20 @@ public final class BatteryInfoProvider: Sendable {
     public nonisolated func detailedBatteryInfo() -> BatteryDetailInfo? {
         guard let info = readBatteryInfo() else { return nil }
 
-        let currentCapacity = (info["CurrentCapacity"] as? Int) ?? 0
-        let maxCapacity = (info["MaxCapacity"] as? Int) ?? 0
+        // Apple Silicon: AppleRawCurrentCapacity/AppleRawMaxCapacity are mAh
+        // Intel: CurrentCapacity/MaxCapacity are mAh
+        // On Apple Silicon, CurrentCapacity/MaxCapacity may return percentages
+        let currentCapacity = (info["AppleRawCurrentCapacity"] as? Int)
+            ?? (info["CurrentCapacity"] as? Int)
+            ?? 0
+        let maxCapacity = (info["AppleRawMaxCapacity"] as? Int)
+            ?? (info["MaxCapacity"] as? Int)
+            ?? 0
         let designCapacity = (info["DesignCapacity"] as? Int) ?? 0
         let cycleCount = (info["CycleCount"] as? Int) ?? 0
+        
+        // macOS が提供するバッテリー健康度（Apple Silicon で利用可能）
+        let osHealthPercent = info["BatteryHealthMaximumCapacityPercent"] as? Int
 
         // Temperature is in centi-degrees (e.g., 2930 = 29.30°C)
         let rawTemp = (info["Temperature"] as? Int) ?? 0
@@ -117,7 +133,8 @@ public final class BatteryInfoProvider: Sendable {
             cycleCount: cycleCount,
             temperature: temperature,
             timeToEmpty: timeToEmpty,
-            timeToFull: timeToFull
+            timeToFull: timeToFull,
+            osHealthPercent: osHealthPercent
         )
     }
 

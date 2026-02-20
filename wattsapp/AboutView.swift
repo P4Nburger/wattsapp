@@ -22,11 +22,11 @@ struct AboutView: View {
             
             // App Name & Version
             VStack(spacing: 4) {
-                Text("WattsConnected")
+                Text("WattsApp")
                     .font(.title2)
                     .fontWeight(.semibold)
                 
-                Text("Version \(appVersion) (\(buildNumber))")
+                Text("Version \(appVersion)")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             }
@@ -43,12 +43,12 @@ struct AboutView: View {
                         Text("開発者にコーヒーを送る")
                     }
                     .font(.system(size: 13, weight: .medium))
-                    .foregroundColor(.white)
+                    .foregroundColor(.primary)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
                     .background(
                         RoundedRectangle(cornerRadius: 8)
-                            .fill(Color.orange)
+                            .fill(Color.secondary.opacity(0.15))
                     )
                 }
                 .buttonStyle(.plain)

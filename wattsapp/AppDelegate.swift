@@ -61,7 +61,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let menu = NSMenu()
         menu.addItem(
             NSMenuItem(
-                title: "Quit WattsConnected",
+                title: "Quit WattsApp",
                 action: #selector(NSApplication.terminate(_:)),
                 keyEquivalent: "q"
             )

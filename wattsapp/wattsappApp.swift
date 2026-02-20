@@ -98,7 +98,7 @@ struct MenuContentView: View {
         Divider()
         
         // Quit
-        Button("Quit WattsConnected") {
+        Button("Quit WattsApp") {
             NSApplication.shared.terminate(nil)
         }
         .keyboardShortcut("q")

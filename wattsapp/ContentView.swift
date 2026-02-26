@@ -1,6 +1,6 @@
 //
 //  ContentView.swift
-//  wattsapp
+//  WattsApp
 //
 //  Created by PANburger on 2025/10/05.
 //

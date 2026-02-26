@@ -4,10 +4,28 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>wattsapp.xcscheme_^#shared#^_</key>
+		<key>WattsApp.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>689D63E02E926DCC00517FC7</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>689D63EF2E926DCE00517FC7</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>689D63F92E926DCE00517FC7</key>
+		<dict>
+			<key>primary</key>
+			<true/>
 		</dict>
 	</dict>
 </dict>

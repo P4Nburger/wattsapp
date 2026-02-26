@@ -16,38 +16,38 @@
 			containerPortal = 689D63D92E926DCC00517FC7 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 689D63E02E926DCC00517FC7;
-			remoteInfo = wattsapp;
+			remoteInfo = WattsApp;
 		};
 		689D63FB2E926DCE00517FC7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 689D63D92E926DCC00517FC7 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 689D63E02E926DCC00517FC7;
-			remoteInfo = wattsapp;
+			remoteInfo = WattsApp;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		689439EC2F2E556100A07EB5 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		689D63E12E926DCC00517FC7 /* wattsapp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = wattsapp.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		689D63F02E926DCE00517FC7 /* wattsappTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = wattsappTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		689D63FA2E926DCE00517FC7 /* wattsappUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = wattsappUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		689D63E12E926DCC00517FC7 /* WattsApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WattsApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		689D63F02E926DCE00517FC7 /* WattsAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WattsAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		689D63FA2E926DCE00517FC7 /* WattsAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WattsAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		689D63E32E926DCC00517FC7 /* wattsapp */ = {
+		689D63E32E926DCC00517FC7 /* WattsApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = wattsapp;
+			path = WattsApp;
 			sourceTree = "<group>";
 		};
-		689D63F32E926DCE00517FC7 /* wattsappTests */ = {
+		689D63F32E926DCE00517FC7 /* WattsAppTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = wattsappTests;
+			path = WattsAppTests;
 			sourceTree = "<group>";
 		};
-		689D63FD2E926DCE00517FC7 /* wattsappUITests */ = {
+		689D63FD2E926DCE00517FC7 /* WattsAppUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = wattsappUITests;
+			path = WattsAppUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -80,9 +80,9 @@
 		689D63D82E926DCC00517FC7 = {
 			isa = PBXGroup;
 			children = (
-				689D63E32E926DCC00517FC7 /* wattsapp */,
-				689D63F32E926DCE00517FC7 /* wattsappTests */,
-				689D63FD2E926DCE00517FC7 /* wattsappUITests */,
+				689D63E32E926DCC00517FC7 /* WattsApp */,
+				689D63F32E926DCE00517FC7 /* WattsAppTests */,
+				689D63FD2E926DCE00517FC7 /* WattsAppUITests */,
 				689D63E22E926DCC00517FC7 /* Products */,
 				689439EC2F2E556100A07EB5 /* README.md */,
 			);
@@ -91,9 +91,9 @@
 		689D63E22E926DCC00517FC7 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				689D63E12E926DCC00517FC7 /* wattsapp.app */,
-				689D63F02E926DCE00517FC7 /* wattsappTests.xctest */,
-				689D63FA2E926DCE00517FC7 /* wattsappUITests.xctest */,
+				689D63E12E926DCC00517FC7 /* WattsApp.app */,
+				689D63F02E926DCE00517FC7 /* WattsAppTests.xctest */,
+				689D63FA2E926DCE00517FC7 /* WattsAppUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -101,9 +101,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		689D63E02E926DCC00517FC7 /* wattsapp */ = {
+		689D63E02E926DCC00517FC7 /* WattsApp */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 689D64042E926DCE00517FC7 /* Build configuration list for PBXNativeTarget "wattsapp" */;
+			buildConfigurationList = 689D64042E926DCE00517FC7 /* Build configuration list for PBXNativeTarget "WattsApp" */;
 			buildPhases = (
 				689D63DD2E926DCC00517FC7 /* Sources */,
 				689D63DE2E926DCC00517FC7 /* Frameworks */,
@@ -114,18 +114,18 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				689D63E32E926DCC00517FC7 /* wattsapp */,
+				689D63E32E926DCC00517FC7 /* WattsApp */,
 			);
-			name = wattsapp;
+			name = WattsApp;
 			packageProductDependencies = (
 			);
-			productName = wattsapp;
-			productReference = 689D63E12E926DCC00517FC7 /* wattsapp.app */;
+			productName = WattsApp;
+			productReference = 689D63E12E926DCC00517FC7 /* WattsApp.app */;
 			productType = "com.apple.product-type.application";
 		};
-		689D63EF2E926DCE00517FC7 /* wattsappTests */ = {
+		689D63EF2E926DCE00517FC7 /* WattsAppTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 689D64072E926DCE00517FC7 /* Build configuration list for PBXNativeTarget "wattsappTests" */;
+			buildConfigurationList = 689D64072E926DCE00517FC7 /* Build configuration list for PBXNativeTarget "WattsAppTests" */;
 			buildPhases = (
 				689D63EC2E926DCE00517FC7 /* Sources */,
 				689D63ED2E926DCE00517FC7 /* Frameworks */,
@@ -137,18 +137,18 @@
 				689D63F22E926DCE00517FC7 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				689D63F32E926DCE00517FC7 /* wattsappTests */,
+				689D63F32E926DCE00517FC7 /* WattsAppTests */,
 			);
-			name = wattsappTests;
+			name = WattsAppTests;
 			packageProductDependencies = (
 			);
-			productName = wattsappTests;
-			productReference = 689D63F02E926DCE00517FC7 /* wattsappTests.xctest */;
+			productName = WattsAppTests;
+			productReference = 689D63F02E926DCE00517FC7 /* WattsAppTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		689D63F92E926DCE00517FC7 /* wattsappUITests */ = {
+		689D63F92E926DCE00517FC7 /* WattsAppUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 689D640A2E926DCE00517FC7 /* Build configuration list for PBXNativeTarget "wattsappUITests" */;
+			buildConfigurationList = 689D640A2E926DCE00517FC7 /* Build configuration list for PBXNativeTarget "WattsAppUITests" */;
 			buildPhases = (
 				689D63F62E926DCE00517FC7 /* Sources */,
 				689D63F72E926DCE00517FC7 /* Frameworks */,
@@ -160,13 +160,13 @@
 				689D63FC2E926DCE00517FC7 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				689D63FD2E926DCE00517FC7 /* wattsappUITests */,
+				689D63FD2E926DCE00517FC7 /* WattsAppUITests */,
 			);
-			name = wattsappUITests;
+			name = WattsAppUITests;
 			packageProductDependencies = (
 			);
-			productName = wattsappUITests;
-			productReference = 689D63FA2E926DCE00517FC7 /* wattsappUITests.xctest */;
+			productName = WattsAppUITests;
+			productReference = 689D63FA2E926DCE00517FC7 /* WattsAppUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -192,7 +192,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 689D63DC2E926DCC00517FC7 /* Build configuration list for PBXProject "wattsapp" */;
+			buildConfigurationList = 689D63DC2E926DCC00517FC7 /* Build configuration list for PBXProject "WattsApp" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -206,9 +206,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				689D63E02E926DCC00517FC7 /* wattsapp */,
-				689D63EF2E926DCE00517FC7 /* wattsappTests */,
-				689D63F92E926DCE00517FC7 /* wattsappUITests */,
+				689D63E02E926DCC00517FC7 /* WattsApp */,
+				689D63EF2E926DCE00517FC7 /* WattsAppTests */,
+				689D63F92E926DCE00517FC7 /* WattsAppUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -265,12 +265,12 @@
 /* Begin PBXTargetDependency section */
 		689D63F22E926DCE00517FC7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 689D63E02E926DCC00517FC7 /* wattsapp */;
+			target = 689D63E02E926DCC00517FC7 /* WattsApp */;
 			targetProxy = 689D63F12E926DCE00517FC7 /* PBXContainerItemProxy */;
 		};
 		689D63FC2E926DCE00517FC7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 689D63E02E926DCC00517FC7 /* wattsapp */;
+			target = 689D63E02E926DCC00517FC7 /* WattsApp */;
 			targetProxy = 689D63FB2E926DCE00517FC7 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -416,7 +416,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = PANburger.wattsapp;
+				PRODUCT_BUNDLE_IDENTIFIER = PANburger.WattsApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
@@ -458,7 +458,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = PANburger.wattsapp;
+				PRODUCT_BUNDLE_IDENTIFIER = PANburger.WattsApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
@@ -484,7 +484,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = PANburger.wattsappTests;
+				PRODUCT_BUNDLE_IDENTIFIER = PANburger.WattsAppTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
@@ -494,7 +494,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/wattsapp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/wattsapp";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WattsApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/WattsApp";
 				XROS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Debug;
@@ -509,7 +509,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = PANburger.wattsappTests;
+				PRODUCT_BUNDLE_IDENTIFIER = PANburger.WattsAppTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
@@ -519,7 +519,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/wattsapp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/wattsapp";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WattsApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/WattsApp";
 				XROS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Release;
@@ -533,7 +533,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = PANburger.wattsappUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = PANburger.WattsAppUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
@@ -543,7 +543,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_TARGET_NAME = wattsapp;
+				TEST_TARGET_NAME = WattsApp;
 				XROS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Debug;
@@ -557,7 +557,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = PANburger.wattsappUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = PANburger.WattsAppUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
@@ -567,7 +567,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_TARGET_NAME = wattsapp;
+				TEST_TARGET_NAME = WattsApp;
 				XROS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Release;
@@ -575,7 +575,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		689D63DC2E926DCC00517FC7 /* Build configuration list for PBXProject "wattsapp" */ = {
+		689D63DC2E926DCC00517FC7 /* Build configuration list for PBXProject "WattsApp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				689D64022E926DCE00517FC7 /* Debug */,
@@ -584,7 +584,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		689D64042E926DCE00517FC7 /* Build configuration list for PBXNativeTarget "wattsapp" */ = {
+		689D64042E926DCE00517FC7 /* Build configuration list for PBXNativeTarget "WattsApp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				689D64052E926DCE00517FC7 /* Debug */,
@@ -593,7 +593,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		689D64072E926DCE00517FC7 /* Build configuration list for PBXNativeTarget "wattsappTests" */ = {
+		689D64072E926DCE00517FC7 /* Build configuration list for PBXNativeTarget "WattsAppTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				689D64082E926DCE00517FC7 /* Debug */,
@@ -602,7 +602,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		689D640A2E926DCE00517FC7 /* Build configuration list for PBXNativeTarget "wattsappUITests" */ = {
+		689D640A2E926DCE00517FC7 /* Build configuration list for PBXNativeTarget "WattsAppUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				689D640B2E926DCE00517FC7 /* Debug */,

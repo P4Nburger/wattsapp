@@ -1,13 +1,13 @@
 //
-//  wattsappUITests.swift
-//  wattsappUITests
+//  WattsAppUITests.swift
+//  WattsAppUITests
 //
 //  Created by PANburger on 2025/10/05.
 //
 
 import XCTest
 
-final class wattsappUITests: XCTestCase {
+final class WattsAppUITests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.

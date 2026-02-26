@@ -1,13 +1,13 @@
 //
-//  wattsappUITestsLaunchTests.swift
-//  wattsappUITests
+//  WattsAppUITestsLaunchTests.swift
+//  WattsAppUITests
 //
 //  Created by PANburger on 2025/10/05.
 //
 
 import XCTest
 
-final class wattsappUITestsLaunchTests: XCTestCase {
+final class WattsAppUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true

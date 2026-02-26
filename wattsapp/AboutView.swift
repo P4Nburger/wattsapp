@@ -54,7 +54,7 @@ struct AboutView: View {
                 .buttonStyle(.plain)
                 
                 // GitHub
-                Link(destination: URL(string: "https://github.com/P4Nburger/wattsapp")!) {
+                Link(destination: URL(string: "https://github.com/P4Nburger/WattsApp")!) {
                     HStack(spacing: 4) {
                         Image(systemName: "chevron.left.forwardslash.chevron.right")
                         Text("GitHub でソースを見る")

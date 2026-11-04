@@ -41,7 +41,9 @@ struct MenuContentView: View {
     
     var body: some View {
         // Power Status
-        Text(viewModel.statusDetailText)
+        ForEach(Array(viewModel.statusLines.enumerated()), id: \.offset) { _, line in
+            Text(line.localizedText)
+        }
         
         if let detail = viewModel.batteryDetail {
             let hasVisibleItems = settings.showBatteryPercentage
@@ -55,29 +57,29 @@ struct MenuContentView: View {
             }
             
             if settings.showBatteryPercentage {
-                Label("バッテリー残量: \(detail.percentage)%", systemImage: batteryIcon(for: detail))
-                    .help("現在のバッテリー残量")
+                Label("Battery Level: \(percentText(detail.percentage))", systemImage: PowerPresentation.batteryIcon(percentage: detail.percentage))
+                    .help("Current battery charge level.")
             }
             if settings.showBatteryHealth {
-                Label("バッテリー健康度: \(detail.healthPercentage)%", systemImage: "heart.fill")
-                    .help("設計容量に対する現在の最大容量の割合。100%に近いほどバッテリーの劣化が少ないことを示します。")
+                Label("Battery Health: \(percentText(detail.healthPercentage))", systemImage: "heart.fill")
+                    .help("Current maximum capacity compared with the design capacity. The closer to 100 percent, the less the battery has worn.")
             }
             if settings.showCycleCount {
-                Label("サイクル数: \(detail.cycleCount)回", systemImage: "arrow.triangle.2.circlepath")
-                    .help("バッテリーの充放電サイクル回数。Apple は最大 1000 サイクルまで設計しています。")
+                Label("Cycle Count: \(detail.cycleCount)", systemImage: "arrow.triangle.2.circlepath")
+                    .help("Number of charge cycles. Mac notebook batteries are designed to retain up to 80 percent of their original capacity at 1,000 cycles.")
             }
             if settings.showTemperature {
-                Label(String(format: "温度: %.1f°C", detail.temperature), systemImage: "thermometer.medium")
-                    .help("バッテリーの現在の温度。高温が続くとバッテリー寿命に影響します。")
+                Label("Temperature: \(temperatureText(detail.temperature))", systemImage: "thermometer.medium")
+                    .help("Current battery temperature. Staying hot for long periods can shorten battery life.")
             }
             if settings.showTimeRemaining {
                 if let timeToFull = detail.timeToFull {
-                    Label("満充電まで: \(formatMinutes(timeToFull))", systemImage: "bolt.fill")
-                        .help("現在の充電速度に基づく満充電までの予想時間")
+                    Label("Time to Full: \(formatMinutes(timeToFull))", systemImage: "bolt.fill")
+                        .help("Estimated time until fully charged at the current charging rate.")
                 }
                 if let timeToEmpty = detail.timeToEmpty {
-                    Label("残り使用時間: \(formatMinutes(timeToEmpty))", systemImage: "clock")
-                        .help("現在の消費電力に基づくバッテリー使用可能な残り時間")
+                    Label("Time Remaining: \(formatMinutes(timeToEmpty))", systemImage: "clock")
+                        .help("Estimated battery time remaining at the current power draw.")
                 }
             }
         }
@@ -86,11 +88,11 @@ struct MenuContentView: View {
         
         // Settings
         if #available(macOS 14.0, *) {
-            SettingsLink {
-                Text("設定...")
-            }
+            OpenSettingsButton()
         } else {
-            Button("設定...") {
+            Button("Settings…") {
+                // メニューバー専用アプリ（LSUIElement）は設定ウインドウが前面に出ないことがあるので明示的にアクティブにする
+                NSApp.activate(ignoringOtherApps: true)
                 NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
             }
         }
@@ -106,23 +108,40 @@ struct MenuContentView: View {
     
     // MARK: - Helpers
     
-    private func batteryIcon(for detail: BatteryDetailInfo) -> String {
-        let pct = detail.percentage
-        switch pct {
-        case 76...100: return "battery.100"
-        case 51...75:  return "battery.75"
-        case 26...50:  return "battery.50"
-        case 1...25:   return "battery.25"
-        default:       return "battery.0"
-        }
+    /// "%" を含む文字列はローカライズのキーに入れず、値として渡す
+    private func percentText(_ value: Int) -> String {
+        "\(value)%"
     }
-    
+
+    private func temperatureText(_ celsius: Double) -> String {
+        String(format: "%.1f°C", celsius)
+    }
+
     private func formatMinutes(_ minutes: Int) -> String {
         if minutes < 60 {
-            return "\(minutes)分"
+            return String(localized: "\(minutes) min")
         }
         let h = minutes / 60
         let m = minutes % 60
-        return m > 0 ? "\(h)時間\(m)分" : "\(h)時間"
+        return m > 0 ? String(localized: "\(h) hr \(m) min") : String(localized: "\(h) hr")
+    }
+}
+
+// MARK: - Open Settings (macOS 14+)
+
+/// 設定を開くボタン。
+///
+/// `SettingsLink` はウインドウを開くだけでアプリをアクティブにしないため、
+/// メニューバー専用アプリ（LSUIElement）では設定ウインドウが他のアプリの後ろに開いてしまう。
+/// 先にアプリをアクティブにしてから開く。
+@available(macOS 14.0, *)
+private struct OpenSettingsButton: View {
+    @Environment(\.openSettings) private var openSettings
+
+    var body: some View {
+        Button("Settings…") {
+            NSApp.activate()
+            openSettings()
+        }
     }
 }

@@ -1,0 +1,626 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "%@ / Adapter: %lldW" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ / アダプタ: %2$lldW"
+          }
+        }
+      }
+    },
+    "%lld hr" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld時間"
+          }
+        }
+      }
+    },
+    "%lld hr %lld min" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld時間%2$lld分"
+          }
+        }
+      }
+    },
+    "%lld min" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld分"
+          }
+        }
+      }
+    },
+    "About" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "情報"
+          }
+        }
+      }
+    },
+    "Adapter Input: %@" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アダプタからの入力: %@"
+          }
+        }
+      }
+    },
+    "Adjusts the interval to the power state: every 2 seconds while charging, 3 seconds on battery, and 5 seconds when plugged in but not charging." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "電源の状態に応じて自動で間隔を調整します。充電中は2秒、バッテリー駆動中は3秒、AC接続（非充電）時は5秒で更新します。"
+          }
+        }
+      }
+    },
+    "Battery Assist: %@" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "バッテリーからの補助: %@"
+          }
+        }
+      }
+    },
+    "Battery Health" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "バッテリー健康度"
+          }
+        }
+      }
+    },
+    "Battery Health: %@" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "バッテリー健康度: %@"
+          }
+        }
+      }
+    },
+    "Battery Level" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "バッテリー残量"
+          }
+        }
+      }
+    },
+    "Battery Level: %@" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "バッテリー残量: %@"
+          }
+        }
+      }
+    },
+    "Buy the Developer a Coffee" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開発者にコーヒーを送る"
+          }
+        }
+      }
+    },
+    "Charging Battery: %@" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "バッテリーへの充電: %@"
+          }
+        }
+      }
+    },
+    "Choose what appears in the menu bar. The icon changes automatically with the power state." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "メニューバーに表示する内容を選べます。アイコンは電源の状態に応じて自動で変わります。"
+          }
+        }
+      }
+    },
+    "Choose which items appear when you click the menu bar icon. Hover over an item for details." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "メニューバーをクリックした際に表示される項目を選べます。各項目にマウスを合わせると詳しい説明が表示されます。"
+          }
+        }
+      }
+    },
+    "Current battery charge level." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "現在のバッテリー残量"
+          }
+        }
+      }
+    },
+    "Current battery temperature. Staying hot for long periods can shorten battery life." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "バッテリーの現在の温度です。高温が続くとバッテリーの寿命に影響する可能性があります。"
+          }
+        }
+      }
+    },
+    "Current maximum capacity compared with the design capacity. The closer to 100 percent, the less the battery has worn." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設計容量に対する現在の最大容量の割合です。100％に近いほどバッテリーの劣化が少ないことを示します。"
+          }
+        }
+      }
+    },
+    "Cycle Count" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サイクル数"
+          }
+        }
+      }
+    },
+    "Cycle Count: %lld" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サイクル数: %lld回"
+          }
+        }
+      }
+    },
+    "Display" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "表示"
+          }
+        }
+      }
+    },
+    "Display Style" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "表示スタイル"
+          }
+        }
+      }
+    },
+    "Estimated battery time remaining at the current power draw." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "現在の消費電力に基づくバッテリーの残り使用時間"
+          }
+        }
+      }
+    },
+    "Estimated time until fully charged at the current charging rate." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "現在の充電速度に基づく満充電までの予想時間"
+          }
+        }
+      }
+    },
+    "Frequent (about 1.5 s)" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "高頻度（約1.5秒）"
+          }
+        }
+      }
+    },
+    "General" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一般"
+          }
+        }
+      }
+    },
+    "Icon and Text" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アイコン＋テキスト"
+          }
+        }
+      }
+    },
+    "Icon Only" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アイコンのみ"
+          }
+        }
+      }
+    },
+    "Infrequent (5 s)" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "低頻度（5秒）"
+          }
+        }
+      }
+    },
+    "Language" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "言語"
+          }
+        }
+      }
+    },
+    "Launch at Login" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ログイン時に起動"
+          }
+        }
+      }
+    },
+    "Menu Bar" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "メニューバー"
+          }
+        }
+      }
+    },
+    "Menu Items" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "メニュー項目"
+          }
+        }
+      }
+    },
+    "Number of charge cycles. Mac notebook batteries are designed to retain up to 80 percent of their original capacity at 1,000 cycles." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "バッテリーの充放電サイクル回数です。Mac のノートブックのバッテリーは、1000 サイクルの時点で本来の容量の最大 80％ を保つよう設計されています。"
+          }
+        }
+      }
+    },
+    "Power Draw: %@" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "消費電力: %@"
+          }
+        }
+      }
+    },
+    "Quit WattsApp" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "WattsApp を終了"
+          }
+        }
+      }
+    },
+    "Restart Now" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今すぐ再起動"
+          }
+        }
+      }
+    },
+    "Restart WattsApp to apply the new language." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "言語の変更は WattsApp の再起動後に反映されます。"
+          }
+        }
+      }
+    },
+    "Settings…" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設定…"
+          }
+        }
+      }
+    },
+    "Shows power usage in the macOS menu bar." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS のメニューバーに消費電力を表示"
+          }
+        }
+      }
+    },
+    "Shows the current battery charge level as a percentage." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "現在のバッテリー残量をパーセンテージで表示します。"
+          }
+        }
+      }
+    },
+    "Shows the remaining battery time when on battery, and the estimated time to full while charging." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "バッテリー駆動時は使用可能な残り時間、充電中は満充電までの予想時間を表示します。"
+          }
+        }
+      }
+    },
+    "Standard (Automatic)" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "標準（自動）"
+          }
+        }
+      }
+    },
+    "Startup" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "起動"
+          }
+        }
+      }
+    },
+    "Status: Charging" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "状態: 充電中"
+          }
+        }
+      }
+    },
+    "Status: Loading…" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "状態: 取得中…"
+          }
+        }
+      }
+    },
+    "Status: On Battery" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "状態: バッテリー駆動"
+          }
+        }
+      }
+    },
+    "Status: Plugged In" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "状態: AC接続"
+          }
+        }
+      }
+    },
+    "Status: Unavailable" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "状態: 取得不可"
+          }
+        }
+      }
+    },
+    "System Default" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "システムに合わせる"
+          }
+        }
+      }
+    },
+    "Temperature" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "温度"
+          }
+        }
+      }
+    },
+    "Temperature: %@" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "温度: %@"
+          }
+        }
+      }
+    },
+    "Text Only" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "テキストのみ"
+          }
+        }
+      }
+    },
+    "Time Remaining / Time to Full" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "残り時間 / 満充電までの時間"
+          }
+        }
+      }
+    },
+    "Time Remaining: %@" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "残り使用時間: %@"
+          }
+        }
+      }
+    },
+    "Time to Full: %@" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "満充電まで: %@"
+          }
+        }
+      }
+    },
+    "Update Interval" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更新間隔"
+          }
+        }
+      }
+    },
+    "Updates about every 1.5 seconds. Handy for following changes in real time, but uses slightly more battery." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "約1.5秒ごとに更新します。リアルタイムで変化を追いたい時に便利ですが、バッテリー消費がやや増えます。"
+          }
+        }
+      }
+    },
+    "Updates every 5 seconds. Recommended if you want to save battery." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5秒ごとに更新します。バッテリー消費を抑えたい場合におすすめです。"
+          }
+        }
+      }
+    },
+    "Version %@" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "バージョン %@"
+          }
+        }
+      }
+    },
+    "View Source on GitHub" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitHub でソースを見る"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

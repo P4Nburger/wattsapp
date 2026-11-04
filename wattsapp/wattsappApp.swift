@@ -88,9 +88,7 @@ struct MenuContentView: View {
         
         // Settings
         if #available(macOS 14.0, *) {
-            SettingsLink {
-                Text("Settings…")
-            }
+            OpenSettingsButton()
         } else {
             Button("Settings…") {
                 // メニューバー専用アプリ（LSUIElement）は設定ウインドウが前面に出ないことがあるので明示的にアクティブにする
@@ -126,5 +124,24 @@ struct MenuContentView: View {
         let h = minutes / 60
         let m = minutes % 60
         return m > 0 ? String(localized: "\(h) hr \(m) min") : String(localized: "\(h) hr")
+    }
+}
+
+// MARK: - Open Settings (macOS 14+)
+
+/// 設定を開くボタン。
+///
+/// `SettingsLink` はウインドウを開くだけでアプリをアクティブにしないため、
+/// メニューバー専用アプリ（LSUIElement）では設定ウインドウが他のアプリの後ろに開いてしまう。
+/// 先にアプリをアクティブにしてから開く。
+@available(macOS 14.0, *)
+private struct OpenSettingsButton: View {
+    @Environment(\.openSettings) private var openSettings
+
+    var body: some View {
+        Button("Settings…") {
+            NSApp.activate()
+            openSettings()
+        }
     }
 }

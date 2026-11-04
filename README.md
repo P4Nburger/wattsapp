@@ -16,8 +16,25 @@ macOSのメニューバーに現在の消費電力や充電時の電力（W）�
 
 本アプリは、バッテリーの詳細情報を取得するため、`IOKit` から公式にはドキュメント化されていない `AppleSmartBattery` の値を読み取っています。そのため、Mac App Store ではなく GitHub Releases 経由での配布となります。
 
-1. [Releases](https://github.com/P4Nburger/WattsApp/releases) ページから最新の `WattsApp.app.zip` をダウンロード・展開
-2. `WattsApp.app` を「アプリケーション」フォルダに配置
+1. [最新リリース](https://github.com/P4Nburger/WattsApp/releases/latest)から `WattsApp.zip` をダウンロードして展開
+2. `WattsApp.app` を「アプリケーション」フォルダに移動
+3. `WattsApp.app` を開く
+
+### 初回起動時に警告が出た場合
+
+本アプリは Apple の公証（notarization）を受けていないため、初回起動時に macOS のセキュリティ警告が表示されます。次の手順で一度だけ許可してください。2 回目以降は普通に起動できます。
+
+**macOS 15 以降**
+
+1. 警告ダイアログで「完了」をクリック
+2. 「システム設定」→「プライバシーとセキュリティ」を開く
+3. 「セキュリティ」の欄に WattsApp がブロックされた旨が表示されているので、「このまま開く」をクリック
+4. 確認ダイアログで「このまま開く」をクリックし、パスワード（または Touch ID）で認証
+
+**macOS 13 / 14**
+
+1. Finder で `WattsApp.app` を Control キーを押しながらクリック（または右クリック）し、「開く」を選択
+2. 確認ダイアログで「開く」をクリック
 
 ## 動作環境
 

@@ -4,9 +4,28 @@ import XCTest
 @MainActor
 final class PowerPresentationTests: XCTestCase {
 
-    private var charging: PowerStatus { PowerStatus(watts: 20, isCharging: true, onAC: true) }
-    private var acIdle: PowerStatus { PowerStatus(watts: 0, isCharging: false, onAC: true) }
-    private var onBattery: PowerStatus { PowerStatus(watts: -10, isCharging: false, onAC: false) }
+    // MARK: - Fixtures
+
+    /// 実機（20W アダプタで充電中）の値
+    private var chargingWithTelemetry: PowerStatus {
+        PowerStatus(batteryWatts: 13.659, isCharging: true, onAC: true,
+                    systemLoadWatts: 5.160, adapterInputWatts: 18.819)
+    }
+
+    /// 実機（バッテリー駆動中）の値
+    private var onBatteryWithTelemetry: PowerStatus {
+        PowerStatus(batteryWatts: -4.396, isCharging: false, onAC: false,
+                    systemLoadWatts: 4.396)
+    }
+
+    /// テレメトリなし（Intel Mac など）
+    private var onBatteryLegacy: PowerStatus {
+        PowerStatus(batteryWatts: -12.04, isCharging: false, onAC: false)
+    }
+
+    private var acIdleLegacy: PowerStatus {
+        PowerStatus(batteryWatts: 0, isCharging: false, onAC: true)
+    }
 
     // MARK: - Battery Icon
 
@@ -27,46 +46,96 @@ final class PowerPresentationTests: XCTestCase {
 
     func testMenuBarIconForEachPowerState() {
         XCTAssertEqual(PowerPresentation.menuBarIcon(status: nil, batteryPercentage: 50), "questionmark.circle")
-        XCTAssertEqual(PowerPresentation.menuBarIcon(status: charging, batteryPercentage: 50), "bolt.fill")
-        XCTAssertEqual(PowerPresentation.menuBarIcon(status: acIdle, batteryPercentage: 100), "powerplug.fill")
-        XCTAssertEqual(PowerPresentation.menuBarIcon(status: onBattery, batteryPercentage: 80), "battery.100")
-        XCTAssertEqual(PowerPresentation.menuBarIcon(status: onBattery, batteryPercentage: 5), "battery.0")
+        XCTAssertEqual(PowerPresentation.menuBarIcon(status: chargingWithTelemetry, batteryPercentage: 50), "bolt.fill")
+        XCTAssertEqual(PowerPresentation.menuBarIcon(status: acIdleLegacy, batteryPercentage: 100), "powerplug.fill")
+        XCTAssertEqual(PowerPresentation.menuBarIcon(status: onBatteryLegacy, batteryPercentage: 80), "battery.100")
+        XCTAssertEqual(PowerPresentation.menuBarIcon(status: onBatteryLegacy, batteryPercentage: 5), "battery.0")
     }
 
     func testMenuBarIconOnBatteryWithoutDetailFallsBackToHalf() {
-        XCTAssertEqual(PowerPresentation.menuBarIcon(status: onBattery, batteryPercentage: nil), "battery.50")
+        XCTAssertEqual(PowerPresentation.menuBarIcon(status: onBatteryLegacy, batteryPercentage: nil), "battery.50")
     }
 
     // MARK: - Update Interval
 
     func testFixedModesIgnorePowerState() {
-        for status in [nil, charging, acIdle, onBattery] {
+        for status in [nil, chargingWithTelemetry, acIdleLegacy, onBatteryLegacy] {
             XCTAssertEqual(PowerPresentation.updateInterval(mode: .fast, status: status), 1.5)
             XCTAssertEqual(PowerPresentation.updateInterval(mode: .slow, status: status), 5.0)
         }
     }
 
     func testAutomaticModeFollowsPowerState() {
-        XCTAssertEqual(PowerPresentation.updateInterval(mode: .automatic, status: charging), 2.0)
-        XCTAssertEqual(PowerPresentation.updateInterval(mode: .automatic, status: onBattery), 3.0)
-        XCTAssertEqual(PowerPresentation.updateInterval(mode: .automatic, status: acIdle), 5.0)
+        XCTAssertEqual(PowerPresentation.updateInterval(mode: .automatic, status: chargingWithTelemetry), 2.0)
+        XCTAssertEqual(PowerPresentation.updateInterval(mode: .automatic, status: onBatteryLegacy), 3.0)
+        XCTAssertEqual(PowerPresentation.updateInterval(mode: .automatic, status: acIdleLegacy), 5.0)
         XCTAssertEqual(PowerPresentation.updateInterval(mode: .automatic, status: nil), 5.0)
     }
 
-    // MARK: - Status Detail Text
+    // MARK: - Menu Bar Text
 
-    func testStatusDetailTextWhileCharging() {
-        let text = PowerPresentation.statusDetailText(status: charging, adapterWattage: 96, wattageText: "20.0W")
-        XCTAssertEqual(text, "状態: 充電中 / アダプタ: 96W / 実効: 20.0W")
+    /// 充電中でも、メニューバーには充電電力 (13.7W) ではなく本体の消費電力 (5.2W) を出す。
+    func testMenuBarShowsSystemLoadWhileCharging() {
+        XCTAssertEqual(PowerPresentation.menuBarText(status: chargingWithTelemetry), "5.2W")
     }
 
-    func testStatusDetailTextOnBatteryOmitsAdapter() {
-        let text = PowerPresentation.statusDetailText(status: onBattery, adapterWattage: 0, wattageText: "10.0W")
-        XCTAssertEqual(text, "状態: バッテリー駆動 / 実効: 10.0W")
+    func testMenuBarShowsSystemLoadOnBattery() {
+        XCTAssertEqual(PowerPresentation.menuBarText(status: onBatteryWithTelemetry), "4.4W")
     }
 
-    func testStatusDetailTextWhenUnavailable() {
-        let text = PowerPresentation.statusDetailText(status: nil, adapterWattage: 0, wattageText: "---W")
-        XCTAssertEqual(text, "状態: 取得不可 / 実効: ---W")
+    func testMenuBarFallsBackToDischargeWithoutTelemetry() {
+        XCTAssertEqual(PowerPresentation.menuBarText(status: onBatteryLegacy), "12.0W")
+    }
+
+    /// テレメトリがなく AC 接続中は測れないので、アダプタ定格を実測値のように出さない。
+    func testMenuBarShowsPlaceholderWhenConsumptionIsUnknown() {
+        XCTAssertEqual(PowerPresentation.menuBarText(status: acIdleLegacy), "---W")
+        XCTAssertEqual(PowerPresentation.menuBarText(status: nil), "---W")
+    }
+
+    // MARK: - Status Lines
+
+    func testStatusLinesWhileCharging() {
+        XCTAssertEqual(
+            PowerPresentation.statusLines(status: chargingWithTelemetry, adapterWattage: 20),
+            [
+                "状態: 充電中 / アダプタ: 20W",
+                "消費電力: 5.2W",
+                "アダプタからの入力: 18.8W",
+                "バッテリーへの充電: 13.7W",
+            ]
+        )
+    }
+
+    func testStatusLinesOnBatteryDoNotRepeatDischarge() {
+        XCTAssertEqual(
+            PowerPresentation.statusLines(status: onBatteryWithTelemetry, adapterWattage: 0),
+            ["状態: バッテリー駆動", "消費電力: 4.4W"]
+        )
+    }
+
+    func testStatusLinesWhenBatteryAssistsAdapter() {
+        let status = PowerStatus(batteryWatts: -3.0, isCharging: false, onAC: true,
+                                 systemLoadWatts: 25.0, adapterInputWatts: 22.0)
+        XCTAssertEqual(
+            PowerPresentation.statusLines(status: status, adapterWattage: 20),
+            [
+                "状態: AC接続 / アダプタ: 20W",
+                "消費電力: 25.0W",
+                "アダプタからの入力: 22.0W",
+                "バッテリーからの補助: 3.0W",
+            ]
+        )
+    }
+
+    func testStatusLinesOnACWithoutTelemetry() {
+        XCTAssertEqual(
+            PowerPresentation.statusLines(status: acIdleLegacy, adapterWattage: 96),
+            ["状態: AC接続 / アダプタ: 96W", "消費電力: ---W"]
+        )
+    }
+
+    func testStatusLinesWhenUnavailable() {
+        XCTAssertEqual(PowerPresentation.statusLines(status: nil, adapterWattage: 0), ["状態: 取得不可"])
     }
 }

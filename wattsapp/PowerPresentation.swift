@@ -51,27 +51,50 @@ enum PowerPresentation {
         return batteryIcon(percentage: batteryPercentage)
     }
 
-    // MARK: - Detail Text
+    // MARK: - Text
 
-    /// メニュー先頭に出す「状態: … / アダプタ: … / 実効: …」の文字列。
-    nonisolated static func statusDetailText(status: PowerStatus?, adapterWattage: Int, wattageText: String) -> String {
-        var parts: [String] = []
-        if let status {
-            if status.onAC {
-                parts.append("状態: \(status.isCharging ? "充電中" : "AC接続")")
-                if adapterWattage > 0 {
-                    parts.append("アダプタ: \(adapterWattage)W")
-                }
-            } else {
-                parts.append("状態: バッテリー駆動")
-            }
-        } else {
-            parts.append("状態: 取得不可")
-            if adapterWattage > 0 {
-                parts.append("アダプタ: \(adapterWattage)W")
-            }
+    /// これ未満の充放電はノイズとして扱う (W)。
+    nonisolated static let noiseFloorWatts: Double = 0.1
+
+    nonisolated static func wattsText(_ watts: Double?) -> String {
+        guard let watts else { return "---W" }
+        return String(format: "%.1fW", max(0, watts))
+    }
+
+    /// メニューバーに出す文字列。常に「Mac 本体の消費電力」を表示する。
+    nonisolated static func menuBarText(status: PowerStatus?) -> String {
+        wattsText(status?.consumptionWatts)
+    }
+
+    /// メニュー先頭に並べる行（状態と電力の内訳）。
+    nonisolated static func statusLines(status: PowerStatus?, adapterWattage: Int) -> [String] {
+        let adapterSuffix = adapterWattage > 0 ? " / アダプタ: \(adapterWattage)W" : ""
+
+        guard let status else {
+            return ["状態: 取得不可" + adapterSuffix]
         }
-        parts.append("実効: \(wattageText)")
-        return parts.joined(separator: " / ")
+
+        var lines: [String] = []
+        if status.onAC {
+            lines.append("状態: \(status.isCharging ? "充電中" : "AC接続")" + adapterSuffix)
+        } else {
+            lines.append("状態: バッテリー駆動")
+        }
+
+        lines.append("消費電力: \(wattsText(status.consumptionWatts))")
+
+        if status.onAC, let input = status.adapterInputWatts {
+            lines.append("アダプタからの入力: \(wattsText(input))")
+        }
+
+        // バッテリー駆動中は放電 = 消費電力なので重複して出さない
+        if status.batteryWatts >= noiseFloorWatts {
+            lines.append("バッテリーへの充電: \(wattsText(status.batteryWatts))")
+        } else if status.onAC, status.batteryWatts <= -noiseFloorWatts {
+            // AC 接続中でも負荷がアダプタの能力を超えるとバッテリーからも給電する
+            lines.append("バッテリーからの補助: \(wattsText(-status.batteryWatts))")
+        }
+
+        return lines
     }
 }

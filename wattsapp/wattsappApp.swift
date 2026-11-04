@@ -41,7 +41,9 @@ struct MenuContentView: View {
     
     var body: some View {
         // Power Status
-        Text(viewModel.statusDetailText)
+        ForEach(Array(viewModel.statusLines.enumerated()), id: \.offset) { _, line in
+            Text(line)
+        }
         
         if let detail = viewModel.batteryDetail {
             let hasVisibleItems = settings.showBatteryPercentage

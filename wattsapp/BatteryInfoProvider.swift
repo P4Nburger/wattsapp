@@ -5,9 +5,37 @@ import IOKit
 import os.log
 
 public struct PowerStatus: Sendable {
-    public let watts: Double
+    /// バッテリーの充放電電力 (W)。+ が充電、− が放電。
+    public let batteryWatts: Double
     public let isCharging: Bool
     public let onAC: Bool
+    /// Mac 本体の消費電力 (W)。PowerTelemetryData がある機種（Apple Silicon）のみ。
+    public let systemLoadWatts: Double?
+    /// 電源アダプタからの入力電力 (W)。PowerTelemetryData がある機種の AC 接続中のみ。
+    public let adapterInputWatts: Double?
+
+    public nonisolated init(
+        batteryWatts: Double,
+        isCharging: Bool,
+        onAC: Bool,
+        systemLoadWatts: Double? = nil,
+        adapterInputWatts: Double? = nil
+    ) {
+        self.batteryWatts = batteryWatts
+        self.isCharging = isCharging
+        self.onAC = onAC
+        self.systemLoadWatts = systemLoadWatts
+        self.adapterInputWatts = adapterInputWatts
+    }
+
+    /// Mac 本体の消費電力 (W)。
+    /// テレメトリがあればその値を使い、なければバッテリー駆動中の放電電力で代用する。
+    /// テレメトリがなく AC 接続中のときは測れないので nil。
+    public nonisolated var consumptionWatts: Double? {
+        if let systemLoadWatts { return systemLoadWatts }
+        if !onAC { return max(0, -batteryWatts) }
+        return nil
+    }
 }
 
 public struct BatteryDetailInfo: Sendable {
@@ -98,15 +126,44 @@ public final class BatteryInfoProvider: Sendable {
         let isCharging = (info["IsCharging"] as? Bool) ?? false
         let onAC = (info["ExternalConnected"] as? Bool) ?? false
 
-        var watts: Double = 0.0
-        if let amperage = info["Amperage"] as? Int,
-           let voltage = info["Voltage"] as? Int {
+        // Apple Silicon では PowerTelemetryData に本体の消費電力・入力電力が入っている。
+        // 入力 (SystemPowerIn) = 本体 (SystemLoad) + バッテリーへの充電 (BatteryPower) の関係になる。
+        let telemetry = info["PowerTelemetryData"] as? [String: Any]
+        let systemLoad = milliwattsToWatts(telemetry?["SystemLoad"]).flatMap { $0 > 0 ? $0 : nil }
+        let adapterInput = onAC ? milliwattsToWatts(telemetry?["SystemPowerIn"]) : nil
+
+        let batteryWatts: Double
+        if let telemetryBatteryWatts = milliwattsToWatts(telemetry?["BatteryPower"]) {
+            batteryWatts = telemetryBatteryWatts
+        } else if let amperage = signedInt(info["Amperage"]),
+                  let voltage = signedInt(info["Voltage"]) {
             // mA × mV = µW
-            let powerMicrowatts = Double(amperage) * Double(voltage)
-            watts = powerMicrowatts / 1_000_000.0
+            batteryWatts = Double(amperage) * Double(voltage) / 1_000_000.0
+        } else {
+            batteryWatts = 0
         }
 
-        return PowerStatus(watts: watts, isCharging: isCharging, onAC: onAC)
+        return PowerStatus(
+            batteryWatts: batteryWatts,
+            isCharging: isCharging,
+            onAC: onAC,
+            systemLoadWatts: systemLoad,
+            adapterInputWatts: adapterInput
+        )
+    }
+
+    /// IORegistry の整数を符号付きで読む。
+    /// ioreg では負の値が 18446744073709551265 のような符号なし整数で表示されるが、
+    /// ビット列としては符号付き 64bit（この例では -351）。
+    /// 符号付きで取れればそのまま、符号なしで来た場合はビット列を符号付きとして読み直す。
+    private nonisolated static func signedInt(_ value: Any?) -> Int? {
+        if let int = value as? Int { return int }
+        if let uint = value as? UInt64 { return Int(Int64(bitPattern: uint)) }
+        return nil
+    }
+
+    private nonisolated static func milliwattsToWatts(_ value: Any?) -> Double? {
+        signedInt(value).map { Double($0) / 1000.0 }
     }
 
     public nonisolated static func parseDetail(_ info: [String: Any]) -> BatteryDetailInfo {

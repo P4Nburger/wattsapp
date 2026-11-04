@@ -7,7 +7,7 @@ final class PowerViewModel: ObservableObject {
 
     @Published var menuBarText: String = "---W"
     @Published var menuBarIcon: String = "bolt.fill"
-    @Published var statusDetailText: String = "状態: 取得中…"
+    @Published var statusLines: [String] = ["状態: 取得中…"]
     @Published var batteryDetail: BatteryDetailInfo?
 
     // MARK: - Private Properties
@@ -20,7 +20,6 @@ final class PowerViewModel: ObservableObject {
     private var settingsCancellable: AnyCancellable?
 
     private let batteryProvider = BatteryInfoProvider()
-    private let textFormatter = StatusTextFormatter()
 
     // MARK: - Init
 
@@ -64,7 +63,6 @@ final class PowerViewModel: ObservableObject {
 
     func updateWattage() {
         let batteryProvider = self.batteryProvider
-        let textFormatter = self.textFormatter
 
         // Read settings on MainActor before entering detached task
         let s = AppSettings.shared
@@ -82,21 +80,17 @@ final class PowerViewModel: ObservableObject {
             let detail = reading?.detail
             let adapter = batteryProvider.readAdapterWattage()
 
-            let wattageText = textFormatter.text(for: status, adapterWattage: adapter)
+            let menuBarText = PowerPresentation.menuBarText(status: status)
             let icon = PowerPresentation.menuBarIcon(status: status, batteryPercentage: detail?.percentage)
             let interval = PowerPresentation.updateInterval(mode: mode, status: status)
-            let detailText = PowerPresentation.statusDetailText(
-                status: status,
-                adapterWattage: adapter,
-                wattageText: wattageText
-            )
+            let lines = PowerPresentation.statusLines(status: status, adapterWattage: adapter)
 
             await MainActor.run { [weak self] in
                 guard let self else { return }
                 self.scheduleTimerIfNeeded(interval)
-                self.menuBarText = wattageText
+                self.menuBarText = menuBarText
                 self.menuBarIcon = icon
-                self.statusDetailText = detailText
+                self.statusLines = lines
                 self.batteryDetail = detail
             }
         }

@@ -11,7 +11,7 @@ macOSのメニューバーに現在の消費電力や充電時の電力（W）�
 
 ## インストール（手動）
 
-本アプリは、バッテリーの詳細情報を取得するため `IOKit` のプライベートAPIを使用しています。そのため、Mac App Store ではなく GitHub Releases 経由での配布となります。
+本アプリは、バッテリーの詳細情報を取得するため、`IOKit` から公式にはドキュメント化されていない `AppleSmartBattery` の値を読み取っています。そのため、Mac App Store ではなく GitHub Releases 経由での配布となります。
 
 1. [Releases](https://github.com/P4Nburger/WattsApp/releases) ページから最新の `WattsApp.app.zip` をダウンロード・展開
 2. `WattsApp.app` を「アプリケーション」フォルダに配置
@@ -27,6 +27,7 @@ SwiftUI + MVVM アーキテクチャを採用しています。
 
 - `PowerViewModel`: 電力・バッテリー状態の監視ロジック
 - `BatteryInfoProvider`: IOKitを利用したハードウェア情報の取得
+- `PowerPresentation`: アイコン・更新間隔・表示文字列を決める純粋関数（ユニットテスト対象）
 - `AppSettings`: `@AppStorage` を用いた設定の永続化
 - `LaunchAtLogin`: ログイン時自動起動の制御
 

@@ -52,6 +52,12 @@ SwiftUI + MVVM アーキテクチャを採用しています。
 - `LaunchAtLogin`: ログイン時自動起動の制御
 - `AppLanguage`: 表示言語の切り替え（文言は `Localizable.xcstrings` で管理）
 
+## リリースの手順（開発者向け）
+
+1. Xcode の `MARKETING_VERSION` を上げ、`.github/release-notes/v<バージョン>.md` と `CHANGELOG.md` を書く
+2. main にマージすると、GitHub Actions（`draft-release.yml`）がそのバージョンの下書きリリースを作る
+3. Xcode で Archive して `WattsApp.app` を `WattsApp.zip` に圧縮し、下書きに添付して公開する
+
 ## ライセンス
 
 MIT License

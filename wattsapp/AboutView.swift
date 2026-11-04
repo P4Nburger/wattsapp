@@ -22,7 +22,7 @@ struct AboutView: View {
             
             // App Name & Version
             VStack(spacing: 4) {
-                Text("WattsApp")
+                Text(verbatim: "WattsApp")
                     .font(.title2)
                     .fontWeight(.semibold)
                 
@@ -39,8 +39,8 @@ struct AboutView: View {
                 // Buy Me a Coffee
                 Link(destination: URL(string: "https://buymeacoffee.com/panburger")!) {
                     HStack(spacing: 6) {
-                        Text("☕")
-                        Text("開発者にコーヒーを送る")
+                        Text(verbatim: "☕")
+                        Text("Buy the Developer a Coffee")
                     }
                     .font(.system(size: 13, weight: .medium))
                     .foregroundColor(.primary)
@@ -57,7 +57,7 @@ struct AboutView: View {
                 Link(destination: URL(string: "https://github.com/P4Nburger/WattsApp")!) {
                     HStack(spacing: 4) {
                         Image(systemName: "chevron.left.forwardslash.chevron.right")
-                        Text("GitHub でソースを見る")
+                        Text("View Source on GitHub")
                     }
                     .font(.caption)
                 }
@@ -68,11 +68,11 @@ struct AboutView: View {
             
             // Copyright
             VStack(spacing: 4) {
-                Text("© 2025 PANburger")
+                Text(verbatim: "© 2025 PANburger")
                     .font(.caption)
                     .foregroundColor(.secondary)
                 
-                Text("macOS のメニューバーに電力消費を表示")
+                Text("Shows power usage in the macOS menu bar.")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }

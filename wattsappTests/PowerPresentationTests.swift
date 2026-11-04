@@ -94,15 +94,16 @@ final class PowerPresentationTests: XCTestCase {
     }
 
     // MARK: - Status Lines
+    // 文言は表示言語で変わるので、ここでは「どの行を出すか」だけを検証する。
 
     func testStatusLinesWhileCharging() {
         XCTAssertEqual(
             PowerPresentation.statusLines(status: chargingWithTelemetry, adapterWattage: 20),
             [
-                "状態: 充電中 / アダプタ: 20W",
-                "消費電力: 5.2W",
-                "アダプタからの入力: 18.8W",
-                "バッテリーへの充電: 13.7W",
+                .state(.charging, adapterWatts: 20),
+                .consumption(watts: 5.160),
+                .adapterInput(watts: 18.819),
+                .batteryCharging(watts: 13.659),
             ]
         )
     }
@@ -110,7 +111,7 @@ final class PowerPresentationTests: XCTestCase {
     func testStatusLinesOnBatteryDoNotRepeatDischarge() {
         XCTAssertEqual(
             PowerPresentation.statusLines(status: onBatteryWithTelemetry, adapterWattage: 0),
-            ["状態: バッテリー駆動", "消費電力: 4.4W"]
+            [.state(.onBattery, adapterWatts: nil), .consumption(watts: 4.396)]
         )
     }
 
@@ -120,10 +121,10 @@ final class PowerPresentationTests: XCTestCase {
         XCTAssertEqual(
             PowerPresentation.statusLines(status: status, adapterWattage: 20),
             [
-                "状態: AC接続 / アダプタ: 20W",
-                "消費電力: 25.0W",
-                "アダプタからの入力: 22.0W",
-                "バッテリーからの補助: 3.0W",
+                .state(.pluggedIn, adapterWatts: 20),
+                .consumption(watts: 25.0),
+                .adapterInput(watts: 22.0),
+                .batteryAssist(watts: 3.0),
             ]
         )
     }
@@ -131,11 +132,21 @@ final class PowerPresentationTests: XCTestCase {
     func testStatusLinesOnACWithoutTelemetry() {
         XCTAssertEqual(
             PowerPresentation.statusLines(status: acIdleLegacy, adapterWattage: 96),
-            ["状態: AC接続 / アダプタ: 96W", "消費電力: ---W"]
+            [.state(.pluggedIn, adapterWatts: 96), .consumption(watts: nil)]
         )
     }
 
     func testStatusLinesWhenUnavailable() {
-        XCTAssertEqual(PowerPresentation.statusLines(status: nil, adapterWattage: 0), ["状態: 取得不可"])
+        XCTAssertEqual(
+            PowerPresentation.statusLines(status: nil, adapterWattage: 0),
+            [.state(.unavailable, adapterWatts: nil)]
+        )
+    }
+
+    /// 数値部分は言語によらず同じ表記になる（"5.2W" / "---W"）。
+    func testLocalizedTextContainsFormattedWatts() {
+        XCTAssertTrue(StatusLine.consumption(watts: 5.16).localizedText.contains("5.2W"))
+        XCTAssertTrue(StatusLine.consumption(watts: nil).localizedText.contains("---W"))
+        XCTAssertTrue(StatusLine.state(.charging, adapterWatts: 20).localizedText.contains("20W"))
     }
 }

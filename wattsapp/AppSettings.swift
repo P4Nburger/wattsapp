@@ -16,9 +16,9 @@ class AppSettings: ObservableObject {
         
         nonisolated var title: String {
             switch self {
-            case .iconAndText: return "アイコン＋テキスト"
-            case .textOnly:    return "テキストのみ"
-            case .iconOnly:    return "アイコンのみ"
+            case .iconAndText: return String(localized: "Icon and Text")
+            case .textOnly:    return String(localized: "Text Only")
+            case .iconOnly:    return String(localized: "Icon Only")
             }
         }
     }
@@ -55,20 +55,20 @@ enum UpdateIntervalMode: Int, CaseIterable, Identifiable, Sendable {
     
     nonisolated var title: String {
         switch self {
-        case .fast: return "高頻度（約1.5秒）"
-        case .automatic: return "標準（自動）"
-        case .slow: return "低頻度（5秒）"
+        case .fast: return String(localized: "Frequent (about 1.5 s)")
+        case .automatic: return String(localized: "Standard (Automatic)")
+        case .slow: return String(localized: "Infrequent (5 s)")
         }
     }
     
     nonisolated var infoDescription: String {
         switch self {
         case .fast:
-            return "約1.5秒ごとに更新します。リアルタイムで変化を追いたい時に便利ですが、バッテリー消費がやや増えます。"
+            return String(localized: "Updates about every 1.5 seconds. Handy for following changes in real time, but uses slightly more battery.")
         case .automatic:
-            return "電源の状態に応じて自動で間隔を調整します。充電中は2秒、バッテリー駆動中は3秒、AC接続（非充電）時は5秒で更新します。"
+            return String(localized: "Adjusts the interval to the power state: every 2 seconds while charging, 3 seconds on battery, and 5 seconds when plugged in but not charging.")
         case .slow:
-            return "5秒ごとに更新します。バッテリー消費を抑えたい場合におすすめです。"
+            return String(localized: "Updates every 5 seconds. Recommended if you want to save battery.")
         }
     }
 }

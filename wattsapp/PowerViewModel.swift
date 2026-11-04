@@ -7,7 +7,7 @@ final class PowerViewModel: ObservableObject {
 
     @Published var menuBarText: String = "---W"
     @Published var menuBarIcon: String = "bolt.fill"
-    @Published var statusLines: [String] = ["状態: 取得中…"]
+    @Published var statusLines: [StatusLine] = [.state(.loading, adapterWatts: nil)]
     @Published var batteryDetail: BatteryDetailInfo?
 
     // MARK: - Private Properties

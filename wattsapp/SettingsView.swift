@@ -35,14 +35,7 @@ struct GeneralSettingsView: View {
             }
             
             Section("更新間隔") {
-                Picker("更新間隔", selection: Binding(
-                    get: {
-                        UpdateIntervalMode(rawValue: settings.savedUpdateIntervalMode) ?? .automatic
-                    },
-                    set: { newValue in
-                        settings.savedUpdateIntervalMode = newValue.rawValue
-                    }
-                )) {
+                Picker("更新間隔", selection: $settings.updateIntervalMode) {
                     ForEach(UpdateIntervalMode.allCases) { mode in
                         Text(mode.title).tag(mode)
                     }
@@ -50,12 +43,11 @@ struct GeneralSettingsView: View {
                 .pickerStyle(.radioGroup)
                 
                 // Info description for the currently selected mode
-                let currentMode = UpdateIntervalMode(rawValue: settings.savedUpdateIntervalMode) ?? .automatic
                 HStack(alignment: .top, spacing: 6) {
                     Image(systemName: "info.circle")
                         .foregroundColor(.secondary)
                         .font(.caption)
-                    Text(currentMode.infoDescription)
+                    Text(settings.updateIntervalMode.infoDescription)
                         .font(.caption)
                         .foregroundColor(.secondary)
                         .fixedSize(horizontal: false, vertical: true)

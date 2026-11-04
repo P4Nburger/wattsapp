@@ -55,7 +55,7 @@ struct MenuContentView: View {
             }
             
             if settings.showBatteryPercentage {
-                Label("バッテリー残量: \(detail.percentage)%", systemImage: batteryIcon(for: detail))
+                Label("バッテリー残量: \(detail.percentage)%", systemImage: PowerPresentation.batteryIcon(percentage: detail.percentage))
                     .help("現在のバッテリー残量")
             }
             if settings.showBatteryHealth {
@@ -91,6 +91,8 @@ struct MenuContentView: View {
             }
         } else {
             Button("設定...") {
+                // メニューバー専用アプリ（LSUIElement）は設定ウインドウが前面に出ないことがあるので明示的にアクティブにする
+                NSApp.activate(ignoringOtherApps: true)
                 NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
             }
         }
@@ -105,17 +107,6 @@ struct MenuContentView: View {
     }
     
     // MARK: - Helpers
-    
-    private func batteryIcon(for detail: BatteryDetailInfo) -> String {
-        let pct = detail.percentage
-        switch pct {
-        case 76...100: return "battery.100"
-        case 51...75:  return "battery.75"
-        case 26...50:  return "battery.50"
-        case 1...25:   return "battery.25"
-        default:       return "battery.0"
-        }
-    }
     
     private func formatMinutes(_ minutes: Int) -> String {
         if minutes < 60 {

@@ -38,6 +38,11 @@ public struct BatteryDetailInfo: Sendable {
     }
 }
 
+public struct BatteryReading: Sendable {
+    public let status: PowerStatus
+    public let detail: BatteryDetailInfo?
+}
+
 public final class BatteryInfoProvider: Sendable {
     private nonisolated let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier ?? "com.wattsconnected",
@@ -78,25 +83,33 @@ public final class BatteryInfoProvider: Sendable {
         return dict
     }
 
-    public nonisolated func currentChargingStatus() -> PowerStatus? {
+    /// AppleSmartBattery を 1 回だけ読み、状態と（必要なら）詳細を返す。
+    public nonisolated func readBattery(includeDetail: Bool) -> BatteryReading? {
         guard let info = readBatteryInfo() else { return nil }
+        return BatteryReading(
+            status: Self.parseStatus(info),
+            detail: includeDetail ? Self.parseDetail(info) : nil
+        )
+    }
 
+    // MARK: - Parsing (pure, testable)
+
+    public nonisolated static func parseStatus(_ info: [String: Any]) -> PowerStatus {
         let isCharging = (info["IsCharging"] as? Bool) ?? false
         let onAC = (info["ExternalConnected"] as? Bool) ?? false
 
         var watts: Double = 0.0
         if let amperage = info["Amperage"] as? Int,
            let voltage = info["Voltage"] as? Int {
-            let powerMilliwatts = Double(amperage) * Double(voltage)
-            watts = powerMilliwatts / 1_000_000.0
+            // mA × mV = µW
+            let powerMicrowatts = Double(amperage) * Double(voltage)
+            watts = powerMicrowatts / 1_000_000.0
         }
 
         return PowerStatus(watts: watts, isCharging: isCharging, onAC: onAC)
     }
 
-    public nonisolated func detailedBatteryInfo() -> BatteryDetailInfo? {
-        guard let info = readBatteryInfo() else { return nil }
-
+    public nonisolated static func parseDetail(_ info: [String: Any]) -> BatteryDetailInfo {
         // Apple Silicon: AppleRawCurrentCapacity/AppleRawMaxCapacity are mAh
         // Intel: CurrentCapacity/MaxCapacity are mAh
         // On Apple Silicon, CurrentCapacity/MaxCapacity may return percentages
@@ -108,7 +121,7 @@ public final class BatteryInfoProvider: Sendable {
             ?? 0
         let designCapacity = (info["DesignCapacity"] as? Int) ?? 0
         let cycleCount = (info["CycleCount"] as? Int) ?? 0
-        
+
         // macOS が提供するバッテリー健康度（Apple Silicon で利用可能）
         let osHealthPercent = info["BatteryHealthMaximumCapacityPercent"] as? Int
 
@@ -116,26 +129,22 @@ public final class BatteryInfoProvider: Sendable {
         let rawTemp = (info["Temperature"] as? Int) ?? 0
         let temperature = Double(rawTemp) / 100.0
 
-        let timeToEmpty: Int? = {
-            guard let minutes = info["AvgTimeToEmpty"] as? Int, minutes > 0, minutes < 65535 else { return nil }
-            return minutes
-        }()
-
-        let timeToFull: Int? = {
-            guard let minutes = info["AvgTimeToFull"] as? Int, minutes > 0, minutes < 65535 else { return nil }
-            return minutes
-        }()
-
         return BatteryDetailInfo(
             currentCapacity: currentCapacity,
             maxCapacity: maxCapacity,
             designCapacity: designCapacity,
             cycleCount: cycleCount,
             temperature: temperature,
-            timeToEmpty: timeToEmpty,
-            timeToFull: timeToFull,
+            timeToEmpty: validMinutes(info["AvgTimeToEmpty"]),
+            timeToFull: validMinutes(info["AvgTimeToFull"]),
             osHealthPercent: osHealthPercent
         )
+    }
+
+    /// 65535 は「計算中・不明」を表すので nil にする。
+    private nonisolated static func validMinutes(_ value: Any?) -> Int? {
+        guard let minutes = value as? Int, minutes > 0, minutes < 65535 else { return nil }
+        return minutes
     }
 
     public nonisolated func readAdapterWattage() -> Int {
